@@ -65,6 +65,11 @@ resource "aws_instance" "app2_server" {
     tags = {
       Name = "app2-${var.tag_name[4]}"
     }
-
 }
 
+locals {
+  instance_ids = [
+    aws_instance.app1_server.id,
+    aws_instance.app2_server.id
+  ]
+}

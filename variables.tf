@@ -33,3 +33,13 @@ variable "sg_type" {
   type = list
   default = ["ingress", "egress"]
 }
+
+variable "lb_details" {
+  type = map
+  default = {
+    "lb_name" = "applb"
+    "type" = "application"
+    "lb_name_tg" = "apptg"
+  }
+  
+}
