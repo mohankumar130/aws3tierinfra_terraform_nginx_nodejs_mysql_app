@@ -20,3 +20,16 @@ variable "tag_name" {
     default = ["public", "private", "demo" ,"bastion", "server", "nat"]
 }
 
+variable "instancetype" {
+  type = list
+  default = ["t2.micro"]
+}
+
+variable "key_pair" {
+  default = "project_terraform"
+}
+
+variable "sg_type" {
+  type = list
+  default = ["ingress", "egress"]
+}

@@ -3,3 +3,4 @@ resource "aws_route" "public_route" {
     destination_cidr_block = var.cidr_block["any_cidr"]
     gateway_id = aws_internet_gateway.demo_igw.id
 }
+
