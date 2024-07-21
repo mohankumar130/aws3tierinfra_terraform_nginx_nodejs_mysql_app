@@ -25,8 +25,13 @@ variable "instancetype" {
   default = ["t2.micro"]
 }
 
+variable "rds_instancetype" {
+  type = list
+  default = ["db.t3.micro"]
+}
+
 variable "key_pair" {
-  default = "project_terraform"
+  default = "terraform"
 }
 
 variable "sg_type" {
