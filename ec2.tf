@@ -44,6 +44,24 @@ resource "aws_instance" "app1_server" {
         Name = "app1-${var.tag_name[4]}"
       }
     }
+    provisioner "remote-exec" {
+      inline = [ 
+        "sudo yum update",
+        "sudo amazon-linux-extras install nginx1 -y",
+        "sudo systemctl start nginx",
+        "sudo systemctl enable nginx"
+       ]
+       connection {
+        type        = "ssh"
+        user        = "ec2-user"  # Replace with your SSH user
+        private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
+        host        = aws_instance.app1_server.private_ip
+        # If connecting via bastion server (replace with your bastion IP and user)
+        bastion_host       = aws_instance.bastion_server.public_ip
+        bastion_user       = "ec2-user"
+        bastion_private_key = file("H:/AWS/Key/terraform.pem")
+        }
+      }    
     tags = {
       Name = "app1-${var.tag_name[4]}"
     }
@@ -60,6 +78,25 @@ resource "aws_instance" "app2_server" {
       volume_type = "gp3"
       tags = {
         Name = "app2-${var.tag_name[4]}"
+      }
+    }
+    provisioner "remote-exec" {
+      inline = [ 
+        "sudo yum update",
+        "sudo amazon-linux-extras install nginx1 -y",
+        "sudo systemctl start nginx",
+        "sudo systemctl enable nginx"
+       ]
+       connection {
+        type        = "ssh"
+        user        = "ec2-user"  # Replace with your SSH user
+        private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
+        host        = aws_instance.app2_server.private_ip  # Example: use bastion server's public IP to connect
+
+        # If connecting via bastion server (replace with your bastion IP and user)
+        bastion_host       = aws_instance.bastion_server.public_ip
+        bastion_user       = "ec2-user"
+        bastion_private_key = file("H:/AWS/Key/terraform.pem")
       }
     }
     tags = {
