@@ -16,4 +16,7 @@ resource "aws_security_group" "lb_sg" {
         protocol = "-1"
         cidr_blocks = [ var.cidr_block["any_cidr"] ]
     }
+    tags = {
+        Name = "nodejs_lb"
+    }
 }

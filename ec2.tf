@@ -31,23 +31,23 @@ resource "aws_instance" "nat_server" {
     }
 }
 # app1_server
-resource "aws_instance" "app1_server" {
+resource "aws_instance" "frontend_server" {
     ami = data.aws_ami.aml2_ami.id
     instance_type = var.instancetype[0]
-    vpc_security_group_ids = [ aws_security_group.app1_server_sg.id ]
+    vpc_security_group_ids = [ aws_security_group.frontend_server_sg.id ]
     key_name = var.key_pair
     subnet_id = aws_subnet.private_subnet1.id
     root_block_device {
       volume_size = 8
       volume_type = "gp3"
       tags = {
-        Name = "app1-${var.tag_name[4]}"
+        Name = "frontend-${var.tag_name[4]}"
       }
     }
     provisioner "remote-exec" {
       inline = [ 
         "sudo yum update",
-        "sudo amazon-linux-extras install nginx1 -y",
+        "sudo yum install nginx -y",
         "sudo systemctl start nginx",
         "sudo systemctl enable nginx"
        ]
@@ -55,7 +55,7 @@ resource "aws_instance" "app1_server" {
         type        = "ssh"
         user        = "ec2-user"  # Replace with your SSH user
         private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
-        host        = aws_instance.app1_server.private_ip
+        host        = aws_instance.frontend_server.private_ip
         # If connecting via bastion server (replace with your bastion IP and user)
         bastion_host       = aws_instance.bastion_server.public_ip
         bastion_user       = "ec2-user"
@@ -63,35 +63,36 @@ resource "aws_instance" "app1_server" {
         }
       }    
     tags = {
-      Name = "app1-${var.tag_name[4]}"
+      Name = "frontend-webserver-${var.tag_name[4]}"
     }
 }
 
-resource "aws_instance" "app2_server" {
+resource "aws_instance" "backend_server" {
     ami = data.aws_ami.aml2_ami.id
     instance_type = var.instancetype[0]
     subnet_id = aws_subnet.private_subnet2.id
-    vpc_security_group_ids = [ aws_security_group.app2_server_sg.id ]
+    vpc_security_group_ids = [ aws_security_group.backend_server_sg.id ]
     key_name = var.key_pair
     root_block_device {
       volume_size = 8
       volume_type = "gp3"
       tags = {
-        Name = "app2-${var.tag_name[4]}"
+        Name = "backend-${var.tag_name[4]}"
       }
     }
     provisioner "remote-exec" {
-      inline = [ 
-        "sudo yum update",
-        "sudo amazon-linux-extras install nginx1 -y",
-        "sudo systemctl start nginx",
-        "sudo systemctl enable nginx"
+      inline = [
+        "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash",
+        "source ~/.bashrc",
+        "nvm install --lts",
+        "node -v",
+        "nvm -v"
        ]
        connection {
         type        = "ssh"
         user        = "ec2-user"  # Replace with your SSH user
         private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
-        host        = aws_instance.app2_server.private_ip  # Example: use bastion server's public IP to connect
+        host        = aws_instance.backend_server.private_ip  # Example: use bastion server's public IP to connect
 
         # If connecting via bastion server (replace with your bastion IP and user)
         bastion_host       = aws_instance.bastion_server.public_ip
@@ -100,13 +101,13 @@ resource "aws_instance" "app2_server" {
       }
     }
     tags = {
-      Name = "app2-${var.tag_name[4]}"
+      Name = "backend-nodejs-${var.tag_name[4]}"
     }
 }
 
 locals {
   instance_ids = [
-    aws_instance.app1_server.id,
-    aws_instance.app2_server.id
+    aws_instance.frontend_server.id,
+    aws_instance.backend_server.id
   ]
 }

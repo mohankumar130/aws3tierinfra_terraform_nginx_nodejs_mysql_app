@@ -1,7 +1,7 @@
 resource "aws_db_instance" "project_rds1" {
   identifier             = "${var.tag_name[2]}-db"
   allocated_storage      = 20
-  storage_type           = "gp3"
+  storage_type           = "gp2"
   engine                 = "mysql"
   engine_version         = "8.0.33"
   instance_class         = var.rds_instancetype[0]

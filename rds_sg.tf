@@ -8,8 +8,7 @@ resource "aws_security_group" "project_rds1_sg" {
         to_port = 3306
         protocol = "tcp"
         cidr_blocks = [
-            "${aws_instance.app1_server.private_ip}/32",
-            "${aws_instance.app2_server.private_ip}/32"
+            "${aws_instance.backend_server.private_ip}/32"
         ]
     }
 }

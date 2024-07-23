@@ -9,5 +9,5 @@ resource "aws_lb_target_group" "app_tg" {
 resource "aws_lb_target_group_attachment" "app_tg_attach" {
     count = length(local.instance_ids)
     target_group_arn = aws_lb_target_group.app_tg.arn
-    target_id = local.instance_ids[count.index]
+    target_id = aws_instance.frontend_server.id
 }
