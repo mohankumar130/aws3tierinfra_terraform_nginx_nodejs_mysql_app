@@ -19,4 +19,4 @@ sudo sed -i "s#proxy_pass http://.*:#proxy_pass http://$NODE_IP:3000;#" $CONF_FI
 # Reload Nginx to apply the changes
 sudo systemctl reload nginx
 
-echo "Nginx configuration updated with server name $NGINX_IP and proxy pass to $NODE_IP:3000"
+echo "Nginx config updated with server name $NGINX_IP and proxy pass to $NODE_IP:3000"
