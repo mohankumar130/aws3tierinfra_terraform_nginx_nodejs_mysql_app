@@ -43,8 +43,18 @@ resource "aws_security_group_rule" "frontend_server_lb_ingress" {
 resource "aws_security_group_rule" "back_front_end" {
   type = var.sg_type[0]
   security_group_id = aws_security_group.backend_server_sg.id
-  cidr_blocks = [ "${aws_instance.frontend_server.private_ip}/32" ]
+  cidr_blocks = [ "${aws_instance.frontend_server.private_ip}/32", ]
   from_port = 22
   to_port = 22
+  protocol = "tcp"
+}
+
+resource "aws_security_group_rule" "back_front_end_loginapp" {
+  type = var.sg_type[0]
+  description = "Login node port"
+  security_group_id = aws_security_group.backend_server_sg.id
+  cidr_blocks = [ "${aws_instance.frontend_server.private_ip}/32", ]
+  from_port = 3000
+  to_port = 3000
   protocol = "tcp"
 }

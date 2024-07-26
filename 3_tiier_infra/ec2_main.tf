@@ -49,7 +49,8 @@ resource "aws_instance" "frontend_server" {
         "sudo yum update",
         "sudo yum install nginx -y",
         "sudo systemctl start nginx",
-        "sudo systemctl enable nginx"
+        "sudo systemctl enable nginx",
+        "sudo touch /etc/nginx/conf.d/nodeapp.conf"
        ]
        connection {
         type        = "ssh"
@@ -103,10 +104,9 @@ resource "aws_instance" "backend_server" {
         # Install PM2 Globally Using npm
         "npm install -g pm2",
         # start node js 
-        "pm2 start my-node-app/server.js"
-
-
-        
+        "pm2 start /home/ec2-user/my-node-app/server.js --name 'loginapp' ",
+        # Remove clone from git
+        "rm -rf /home/ec2-user/terraform"        
        ]
        connection {
         type        = "ssh"
