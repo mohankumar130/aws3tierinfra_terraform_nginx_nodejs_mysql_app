@@ -82,11 +82,31 @@ resource "aws_instance" "backend_server" {
     }
     provisioner "remote-exec" {
       inline = [
+         # Install NVM
         "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash",
+        # Ensure NVM is sourced
         "source ~/.bashrc",
+         # Install Node.js LTS version
         "nvm install --lts",
-        "node -v",
-        "nvm -v"
+        # Install Git
+        "sudo yum install git -y",
+         # Clone the repository
+        "git clone https://github.com/mohankumar130/terraform.git",
+        # Move the Node.js app
+        "mv /home/ec2-user/terraform/my-node-app /home/ec2-user",
+        # Navigate to the app directory
+        "cd /home/ec2-user/my-node-app",
+        # Initialize npm project (adjust as needed)
+        "npm init -y",
+        # Optionally, install Express (if required)
+        "npm install express body-parser mysql2 bcrypt ejs",
+        # Install PM2 Globally Using npm
+        "npm install -g pm2",
+        # start node js 
+        "pm2 start my-node-app/server.js"
+
+
+        
        ]
        connection {
         type        = "ssh"
