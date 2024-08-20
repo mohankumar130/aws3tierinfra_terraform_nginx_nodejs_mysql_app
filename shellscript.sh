@@ -3,11 +3,11 @@
 # Get the private IP address of the Nginx server
 NGINX_IP=$(hostname -I | awk '{print $1}')
 
-# Get the private IP address of the Node.js server (you can adjust this based on your environment)
-NODE_IP="0.0.0.0"  # This can be dynamically fetched if needed
+# Get the private IP address of the Node.js server (replace this with the actual IP or a method to fetch it dynamically)
+NODE_IP="192.168.1.100"  # Example IP, replace with actual
 
 # Path to your Nginx configuration file
-CONF_FILE="/etc/nginx/conf.d/proxy.conf"
+CONF_FILE="/etc/nginx/conf.d/nodeapp.conf"
 
 # Backup the existing configuration file
 sudo cp $CONF_FILE $CONF_FILE.bak

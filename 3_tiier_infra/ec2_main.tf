@@ -55,12 +55,12 @@ resource "aws_instance" "frontend_server" {
        connection {
         type        = "ssh"
         user        = "ec2-user"  # Replace with your SSH user
-        private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
+        private_key = file("D:/Key/terraform.pem")  # Specify the full path to your PEM key file
         host        = aws_instance.frontend_server.private_ip
         # If connecting via bastion server (replace with your bastion IP and user)
         bastion_host       = aws_instance.bastion_server.public_ip
         bastion_user       = "ec2-user"
-        bastion_private_key = file("H:/AWS/Key/terraform.pem")
+        bastion_private_key = file("D:/Key/terraform.pem")
         }
       }    
     tags = {
@@ -95,6 +95,8 @@ resource "aws_instance" "backend_server" {
         "git clone https://github.com/mohankumar130/terraform.git",
         # Move the Node.js app
         "mv /home/ec2-user/terraform/my-node-app /home/ec2-user",
+        # Move conf file particular folder
+        "mv /home/ec2-user/terraform/nodeapp.conf /etc/nginx/conf.d/",
         # Navigate to the app directory
         "cd /home/ec2-user/my-node-app",
         # Initialize npm project (adjust as needed)
@@ -105,19 +107,27 @@ resource "aws_instance" "backend_server" {
         "npm install -g pm2",
         # start node js 
         "pm2 start /home/ec2-user/my-node-app/server.js --name 'loginapp' ",
+        # Installing Mysql Client
+        "sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm",
+        "sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y",
+        "sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023",
+        "sudo dnf install mysql-community-client -y",
+        # Run shell script
+        "sh /home/ec2-user/terraform/database.sh",
+        "sh /home/ec2-user/terraform/shellscript.sh",
         # Remove clone from git
-        "rm -rf /home/ec2-user/terraform"        
+        "rm -rf /home/ec2-user/terraform"
        ]
        connection {
         type        = "ssh"
         user        = "ec2-user"  # Replace with your SSH user
-        private_key = file("H:/AWS/Key/terraform.pem")  # Specify the full path to your PEM key file
+        private_key = file("D:/Key/terraform.pem")  # Specify the full path to your PEM key file
         host        = aws_instance.backend_server.private_ip  # Example: use bastion server's public IP to connect
 
         # If connecting via bastion server (replace with your bastion IP and user)
         bastion_host       = aws_instance.bastion_server.public_ip
         bastion_user       = "ec2-user"
-        bastion_private_key = file("H:/AWS/Key/terraform.pem")
+        bastion_private_key = file("D:/Key/terraform.pem")
       }
     }
     tags = {
