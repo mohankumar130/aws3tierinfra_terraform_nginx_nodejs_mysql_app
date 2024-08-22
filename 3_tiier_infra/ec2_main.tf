@@ -50,7 +50,10 @@ resource "aws_instance" "frontend_server" {
         "sudo yum install nginx -y",
         "sudo systemctl start nginx",
         "sudo systemctl enable nginx",
-        "sudo touch /etc/nginx/conf.d/nodeapp.conf"
+        "https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
+        "sudo mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/nodeapp.conf /etc/nginx/conf.d",
+        "sudo mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/shellscript.sh /home/ec2-user",
+        "rm -rf /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app"
        ]
        connection {
         type        = "ssh"
@@ -92,11 +95,10 @@ resource "aws_instance" "backend_server" {
         # Install Git
         "sudo yum install git -y",
          # Clone the repository
-        "git clone https://github.com/mohankumar130/terraform.git",
+        "https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
         # Move the Node.js app
-        "mv /home/ec2-user/terraform/my-node-app /home/ec2-user",
-        # Move conf file particular folder
-        "mv /home/ec2-user/terraform/nodeapp.conf /etc/nginx/conf.d/",
+        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/my-node-app /home/ec2-user",
+        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/database.sh /home/ec2-user",
         # Navigate to the app directory
         "cd /home/ec2-user/my-node-app",
         # Initialize npm project (adjust as needed)
@@ -112,11 +114,9 @@ resource "aws_instance" "backend_server" {
         "sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y",
         "sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023",
         "sudo dnf install mysql-community-client -y",
-        # Run shell script
-        "sh /home/ec2-user/terraform/database.sh",
-        "sh /home/ec2-user/terraform/shellscript.sh",
+        "sh database.sh"
         # Remove clone from git
-        "rm -rf /home/ec2-user/terraform"
+        "rm -rf /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app"
        ]
        connection {
         type        = "ssh"
