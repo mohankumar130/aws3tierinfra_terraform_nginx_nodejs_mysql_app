@@ -50,7 +50,8 @@ resource "aws_instance" "frontend_server" {
         "sudo yum install nginx -y",
         "sudo systemctl start nginx",
         "sudo systemctl enable nginx",
-        "https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
+        "sudo yum install git -y",
+        "git clone https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
         "sudo mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/nodeapp.conf /etc/nginx/conf.d",
         "sudo mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/shellscript.sh /home/ec2-user",
         "rm -rf /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app"
@@ -86,37 +87,12 @@ resource "aws_instance" "backend_server" {
     }
     provisioner "remote-exec" {
       inline = [
-         # Install NVM
-        "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash",
-        # Ensure NVM is sourced
-        "source ~/.bashrc",
-         # Install Node.js LTS version
-        "nvm install --lts",
-        # Install Git
+         # Install Git
         "sudo yum install git -y",
-         # Clone the repository
+         # Clone the repository and install required application
         "https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
-        # Move the Node.js app
-        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/my-node-app /home/ec2-user",
-        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/database.sh /home/ec2-user",
-        # Navigate to the app directory
-        "cd /home/ec2-user/my-node-app",
-        # Initialize npm project (adjust as needed)
-        "npm init -y",
-        # Optionally, install Express (if required)
-        "npm install express body-parser mysql2 bcrypt ejs",
-        # Install PM2 Globally Using npm
-        "npm install -g pm2",
-        # start node js 
-        "pm2 start /home/ec2-user/my-node-app/server.js --name 'loginapp' ",
-        # Installing Mysql Client
-        "sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm",
-        "sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y",
-        "sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023",
-        "sudo dnf install mysql-community-client -y",
-        "sh database.sh"
-        # Remove clone from git
-        "rm -rf /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app"
+        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/installer.sh /home/ec2-user",
+        "sh installer.sh"
        ]
        connection {
         type        = "ssh"
