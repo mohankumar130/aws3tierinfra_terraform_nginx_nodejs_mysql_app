@@ -86,24 +86,36 @@ resource "aws_instance" "backend_server" {
       }
     }
     provisioner "remote-exec" {
-      inline = [
-         # Install Git
-        "sudo yum install git -y",
-         # Clone the repository and install required application
-        "https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
-        "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app/installer.sh /home/ec2-user",
-        "sh installer.sh"
-       ]
-       connection {
-        type        = "ssh"
-        user        = "ec2-user"  # Replace with your SSH user
-        private_key = file("D:/Key/terraform.pem")  # Specify the full path to your PEM key file
-        host        = aws_instance.backend_server.private_ip  # Example: use bastion server's public IP to connect
+  inline = [
+    "sudo yum install git -y",
+    "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash",
+    "source ~/.bashrc",
+    "nvm install --lts",
+    "sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm",
+    "sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y",
+    "sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023",
+    "sudo dnf install mysql-community-client -y",
+    "git clone https://github.com/mohankumar130/aws3tierinfra_terraform_nginx_nodejs_mysql_app.git",
+    "mv /home/ec2-user/aws3tierinfra_terraform_nginx_nodejs_mysql_app /home/ec2-user/application",
+    "mv /home/ec2-user/application/my-node-app /home/ec2-user/",
+    "mv /home/ec2-user/application/database.sh /home/ec2-user/",
+    "npm install -g pm2",
+    "cd /home/ec2-user/my-node-app && npm init -y",
+    "cd /home/ec2-user/my-node-app && npm install express body-parser mysql2 bcrypt ejs",
+    "pm2 start /home/ec2-user/my-node-app/server.js --name 'loginapp'",
+    "rm -rf /home/ec2-user/mysql80*",
+    "rm -rf /home/ec2-user/application"
+  ]
 
-        # If connecting via bastion server (replace with your bastion IP and user)
-        bastion_host       = aws_instance.bastion_server.public_ip
-        bastion_user       = "ec2-user"
-        bastion_private_key = file("D:/Key/terraform.pem")
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("D:/Key/terraform.pem")
+    host        = aws_instance.backend_server.private_ip
+
+    bastion_host       = aws_instance.bastion_server.public_ip
+    bastion_user       = "ec2-user"
+    bastion_private_key = file("D:/Key/terraform.pem")
       }
     }
     tags = {

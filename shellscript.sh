@@ -16,6 +16,14 @@ sudo cp $CONF_FILE $CONF_FILE.bak
 sudo sed -i "s/server_name .*/server_name $NGINX_IP;/" $CONF_FILE
 sudo sed -i "s#proxy_pass http://.*:#proxy_pass http://$NODE_IP:3000;#" $CONF_FILE
 
+# Check if the replacement was successful
+if grep -q "$NGINX_IP" $CONF_FILE && grep -q "$NODE_IP:3000" $CONF_FILE; then
+  echo "Nginx configuration updated successfully."
+else
+  echo "Failed to update Nginx configuration."
+  exit 1
+fi
+
 # Reload Nginx to apply the changes
 sudo systemctl reload nginx
 

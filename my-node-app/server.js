@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const db = mysql.createConnection({
     host: 'demo-db.cnmmi3y5t45q.ap-south-1.rds.amazonaws.com',         // Your host, usually localhost
     user: 'root',      // Your database username
-    password: 'Finisher#123',  // Your database password
+    password: 'Finisher#0123',  // Your database password
     database: 'logindetails'     // Your database name
 });
 
